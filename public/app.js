@@ -1,9 +1,23 @@
-// Grab the articles as a json
-$.getJSON("/articles", function(data) {
-  for (var i = 0; i < data.length; i++) {
-    // Display the apropos information on the page
-    $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-  }
+function showArticles() {
+  // Grab the articles as a json
+  $.getJSON("/articles", function(data) {
+    for (var i = 0; i < data.length; i++) {
+      // Display the apropos information on the page
+      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+    }
+  });
+}
+
+showArticles();
+
+//scrape button onClick function
+$(document).on("click", "#scrape", function() {
+  $.ajax({
+    method: "GET",
+    url: "/scrape"
+  }).then(function() {
+    showArticles();
+  });
 });
 
 // Whenever someone clicks a p tag
@@ -73,13 +87,7 @@ $(document).on("click", "#deletenote", function() {
 
   $.ajax({
     method: "DELETE",
-    url: "/notes/" + thisId,
-    data: {
-      // Value taken from title input
-      title: $("#titleinput").val(),
-      // Value taken from note textarea
-      body: $("#bodyinput").val()
-    }
+    url: "/notes/" + thisId
   })
     // With that done
     .then(function(data) {
@@ -87,9 +95,21 @@ $(document).on("click", "#deletenote", function() {
       console.log(data);
       // Empty the notes section
       $("#notes").empty();
+      $("#notes").html("<h4>NOTE REMOVED!</h4>");
     });
 
   // Also, remove the values entered in the input and textarea for note entry
   $("#titleinput").val("");
   $("#bodyinput").val("");
+});
+
+$(document).on("click", "#clearResults", function() {
+  $.ajax({
+    method: "DELETE",
+    url: "/articles"
+  }).then(function(data) {
+    console.log("All scraped entries cleared");
+    console.log("data: " + data);
+    $("#articles").empty();
+  });
 });
