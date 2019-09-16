@@ -110,6 +110,39 @@ app.delete("/articles", function(req, res) {
   });
 });
 
+app.get("/notes", function(req, res) {
+  db.Note.find({})
+    .then(function(dbNote) {
+      res.json(dbNote);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.get("/notes/:id", function(req, res) {
+  db.Note.findOne({ _id: req.params.id })
+    .then(function(dbNote) {
+      res.json(dbNote);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.delete("/notes/:id", function(req, res) {
+  db.Note.findOne({ _id: req.params.id })
+    .then(function(dbNote) {
+      dbNote.remove();
+    })
+    .then(function() {
+      res.send("Note Removed");
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
 // Listening
 app.listen(PORT, function() {
   console.log("App running on port " + PORT + "!");
