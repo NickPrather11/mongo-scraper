@@ -12,12 +12,7 @@ var ArticleSchema = new Schema({
     required: true
   },
   summary: {
-    type: String,
-    required: true
-  },
-  image: {
-    type: String,
-    required: true
+    type: String
   },
   note: {
     type: Schema.Types.ObjectId,

@@ -34,7 +34,8 @@ app.get("/scrape", function(req, res) {
         .children("h3")
         .text();
       db.Article.find({ title: articleTitle }).then(function(response) {
-        if (!response) {
+        console.log("response: " + response);
+        if (response) {
           // Add the text and href of every link, and save them as properties of the result object
           result.title = articleTitle;
           result.link = $(this)
@@ -47,12 +48,6 @@ app.get("/scrape", function(req, res) {
             .children("div")
             .children("p")
             .text();
-          result.image = $(this)
-            .children(".gs-c-promo-image")
-            .children(".gs-o-media-island")
-            .children(".gs-o-responsive-image")
-            .children("img")
-            .attr("src");
 
           // Create a new Article using the `result` object built from scraping
           db.Article.create(result)

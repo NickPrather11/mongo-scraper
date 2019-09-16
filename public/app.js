@@ -5,20 +5,17 @@ function showArticles() {
       // Display the apropos information on the page
       console.log(data[i]);
       $("#articles").append(
-        "<img src='" +
-          data[i].image +
-          "'/>" +
-          "<a data-id='" +
+        "<p data-id='" +
           data[i]._id +
-          "' href='" +
-          data[i].link +
           "'>" +
           "<h4>" +
           data[i].title +
           "</h4>" +
-          "</a>" +
-          "<br />" +
           data[i].summary +
+          "<br />" +
+          "Link: " +
+          data[i].link +
+          "</p>" +
           "<br /><br />"
       );
     }
