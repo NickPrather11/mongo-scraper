@@ -3,7 +3,24 @@ function showArticles() {
   $.getJSON("/articles", function(data) {
     for (var i = 0; i < data.length; i++) {
       // Display the apropos information on the page
-      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+      console.log(data[i]);
+      $("#articles").append(
+        "<img src='" +
+          data[i].image +
+          "'/>" +
+          "<a data-id='" +
+          data[i]._id +
+          "' href='" +
+          data[i].link +
+          "'>" +
+          "<h4>" +
+          data[i].title +
+          "</h4>" +
+          "</a>" +
+          "<br />" +
+          data[i].summary +
+          "<br /><br />"
+      );
     }
   });
 }
