@@ -12,16 +12,15 @@ function showArticles() {
         "<br />" +
         data[i].author +
         "<br />" +
-        "</p>" +
-        "<a href='" +
+        "<button id='saveArticle'>Save</button></p><a href='" +
         data[i].link +
         "' target='_blank'>" +
         data[i].link +
-        "</a><br /><br />";
+        "</a><hr><br /><br />";
 
       var imgDiv = $("<div>").addClass("col-lg-3");
       imgDiv.append(imgHTML);
-      var articleDiv = $("<div>").addClass("col-lg 9");
+      var articleDiv = $("<div>").addClass("col-lg-9");
       articleDiv.append(articleHTML);
 
       var itemDiv = $("<div>").addClass("row");
@@ -128,13 +127,78 @@ $(document).on("click", "#deletenote", function() {
   $("#bodyinput").val("");
 });
 
+//Clear all results
 $(document).on("click", "#clearResults", function() {
   $.ajax({
     method: "DELETE",
     url: "/articles"
   }).then(function(data) {
-    console.log("All scraped entries cleared");
-    console.log("data: " + data);
     $("#articles").empty();
+    console.log("All scraped entries cleared");
+  });
+});
+
+//Save an Article
+$(document).on("click", "#saveArticle", function() {
+  console.log($(this).attr("data-id"));
+  $.ajax({
+    type: "POST",
+    url:
+      "/update/" +
+      $(this)
+        .parent()
+        .attr("data-id"),
+    dataType: "json",
+    data: {
+      saved: true
+    },
+    // On successful call
+    success: function(data) {
+      console.log("Updated: " + data);
+      alert("Article Saved!");
+    }
+  });
+});
+
+$(document).on("click", "#allSaved", function() {
+  $("#articles").empty();
+  $.ajax({
+    type: "GET",
+    url: "/saved-articles"
+  }).then(function(response) {
+    console.log(response);
+    if (response) {
+      var data = response;
+      for (var i = 0; i < data.length; i++) {
+        var imgHTML = "<img src='" + data[i].image + "'>";
+
+        var articleHTML =
+          "<p data-id='" +
+          data[i]._id +
+          "'>" +
+          data[i].title +
+          "<br />" +
+          data[i].author +
+          "<br />" +
+          "<button id='saveArticle'>Save</button></p><a href='" +
+          data[i].link +
+          "' target='_blank'>" +
+          data[i].link +
+          "</a><hr><br /><br />";
+
+        var imgDiv = $("<div>").addClass("col-lg-3");
+        imgDiv.append(imgHTML);
+        var articleDiv = $("<div>").addClass("col-lg-9");
+        articleDiv.append(articleHTML);
+
+        var itemDiv = $("<div>").addClass("row");
+        itemDiv.append(imgDiv);
+        itemDiv.append(articleDiv);
+
+        $("#articles").append(itemDiv);
+      }
+    } else {
+      $("#articles").text("No Saved Articles");
+    }
   });
 });

@@ -2,6 +2,7 @@ var express = require("express");
 var axios = require("axios");
 var cheerio = require("cheerio");
 var mongoose = require("mongoose");
+var mongojs = require("mongojs");
 
 var PORT = process.env.PORT || 3000;
 
@@ -65,6 +66,16 @@ app.get("/scrape", function(req, res) {
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
   db.Article.find({})
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.get("/saved-articles", function(req, res) {
+  db.Article.find({ saved: true })
     .then(function(dbArticle) {
       res.json(dbArticle);
     })
@@ -151,6 +162,29 @@ app.delete("/notes/:id", function(req, res) {
     .catch(function(err) {
       res.json(err);
     });
+});
+
+// Update just one note by an id
+app.post("/update/:id", function(req, res) {
+  db.Article.updateOne(
+    {
+      _id: mongojs.ObjectId(req.params.id)
+    },
+    {
+      $set: {
+        saved: true
+      }
+    },
+    function(err, edited) {
+      if (err) {
+        console.log(err);
+        res.send(err);
+      } else {
+        console.log(edited);
+        res.send(edited);
+      }
+    }
+  );
 });
 
 // Listening
