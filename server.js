@@ -187,6 +187,17 @@ app.post("/update/:id", function(req, res) {
   );
 });
 
+//Is this needed? Or should I just use an "unsave" button
+app.delete("/saved-articles/:id", function(req, res) {
+  db.Article.findByIdAndDelete(req.params.id)
+    .then(function(data) {
+      res.json("Saved Article Removed: " + data);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
 // Listening
 app.listen(PORT, function() {
   console.log("App running on port " + PORT + "!");
