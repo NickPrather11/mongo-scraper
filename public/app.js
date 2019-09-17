@@ -2,22 +2,33 @@ function showArticles() {
   // Grab the articles as a json
   $.getJSON("/articles", function(data) {
     for (var i = 0; i < data.length; i++) {
-      // Display the apropos information on the page
-      console.log(data[i]);
-      $("#articles").append(
+      var imgHTML = "<img src='" + data[i].image + "'>";
+
+      var articleHTML =
         "<p data-id='" +
-          data[i]._id +
-          "'>" +
-          "<h4>" +
-          data[i].title +
-          "</h4>" +
-          data[i].summary +
-          "<br />" +
-          "Link: " +
-          data[i].link +
-          "</p>" +
-          "<br /><br />"
-      );
+        data[i]._id +
+        "'>" +
+        data[i].title +
+        "<br />" +
+        data[i].author +
+        "<br />" +
+        "</p>" +
+        "<a href='" +
+        data[i].link +
+        "' target='_blank'>" +
+        data[i].link +
+        "</a><br /><br />";
+
+      var imgDiv = $("<div>").addClass("col-lg-3");
+      imgDiv.append(imgHTML);
+      var articleDiv = $("<div>").addClass("col-lg 9");
+      articleDiv.append(articleHTML);
+
+      var itemDiv = $("<div>").addClass("row");
+      itemDiv.append(imgDiv);
+      itemDiv.append(articleDiv);
+
+      $("#articles").append(itemDiv);
     }
   });
 }

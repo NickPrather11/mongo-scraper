@@ -19,62 +19,32 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 app.get("/scrape", function(req, res) {
-  axios.get("https://www.bbc.com/news/world").then(function(response) {
+  axios.get("https://thehardtimes.net/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
     // Now, we grab every h2 within an article tag, and do the following:
-    $(".gs-c-promo").each(function(i, element) {
+    $(".post article").each(function(i, element) {
       // Save an empty result object
       var result = {};
-      var articleTitle = $(this)
-        .children(".gs-c-promo-body")
-        .children("div")
-        .children("a")
-        .children("h3")
-        .text();
-      db.Article.find({ title: articleTitle }).then(function(response) {
-        console.log("response: " + response);
-        if (response) {
-          // Add the text and href of every link, and save them as properties of the result object
-          result.title = articleTitle;
-          result.link = $(this)
-            .children(".gs-c-promo-body")
-            .children("div")
-            .children("a")
-            .attr("href");
-          result.summary = $(this)
-            .children(".gs-c-promo-body")
-            .children("div")
-            .children("p")
-            .text();
 
-          // Create a new Article using the `result` object built from scraping
-          db.Article.create(result)
-            .then(function(dbArticle) {
-              console.log(dbArticle);
-            })
-            .catch(function(err) {
-              console.log(err);
-            });
-        }
-      });
-      // Add the text and href of every link, and save them as properties of the result object
-      result.title = articleTitle;
+      result.title = $(this)
+        .children(".post-header")
+        .children("h2")
+        .children("a")
+        .text();
       result.link = $(this)
-        .children(".gs-c-promo-body")
-        .children("div")
+        .children(".post-header")
+        .children("h2")
         .children("a")
         .attr("href");
-      result.summary = $(this)
-        .children(".gs-c-promo-body")
-        .children("div")
-        .children("p")
+      result.author = $(this)
+        .children(".post-header")
+        .children(".post-byline")
         .text();
       result.image = $(this)
-        .children(".gs-c-promo-image")
-        .children(".gs-o-media-island")
-        .children(".gs-o-responsive-image")
+        .children(".featured-image")
+        .children("a")
         .children("img")
         .attr("src");
 
