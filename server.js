@@ -19,6 +19,7 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
+//Scrape new articles
 app.get("/scrape", function(req, res) {
   axios.get("https://thehardtimes.net/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -63,9 +64,9 @@ app.get("/scrape", function(req, res) {
   });
 });
 
-// Route for getting all Articles from the db
+// Get all articles
 app.get("/articles", function(req, res) {
-  db.Article.find({})
+  db.Article.find({ saved: false })
     .then(function(dbArticle) {
       res.json(dbArticle);
     })
@@ -74,6 +75,7 @@ app.get("/articles", function(req, res) {
     });
 });
 
+//Get saved articles
 app.get("/saved-articles", function(req, res) {
   db.Article.find({ saved: true })
     .then(function(dbArticle) {
@@ -84,7 +86,7 @@ app.get("/saved-articles", function(req, res) {
     });
 });
 
-// Route for grabbing a specific Article by id, populate it with it's note
+// Get specific article and populate with note
 app.get("/articles/:id", function(req, res) {
   db.Article.findOne({ _id: req.params.id })
     // ..and populate all of the notes associated with it
@@ -97,7 +99,7 @@ app.get("/articles/:id", function(req, res) {
     });
 });
 
-// Route for saving/updating an Article's associated Note
+// Save/update a note
 app.post("/articles/:id", function(req, res) {
   // Create a new note and pass the req.body to the entry
   db.Note.create(req.body)
@@ -115,8 +117,9 @@ app.post("/articles/:id", function(req, res) {
     });
 });
 
+//clear articles
 app.delete("/articles", function(req, res) {
-  db.Article.deleteMany({})
+  db.Article.deleteMany({ saved: false })
     .then(function(response) {
       console.log(response);
       res.status(200).end();
@@ -124,7 +127,7 @@ app.delete("/articles", function(req, res) {
     .catch(function(err) {
       if (err) throw err;
     });
-  db.Note.deleteMany({})
+  db.Note.deleteMany({ saved: false })
     .then(function(response) {
       console.log(response);
       res.status(200).end();
@@ -134,6 +137,7 @@ app.delete("/articles", function(req, res) {
     });
 });
 
+//Get notes
 app.get("/notes", function(req, res) {
   db.Note.find({})
     .then(function(dbNote) {
@@ -144,6 +148,7 @@ app.get("/notes", function(req, res) {
     });
 });
 
+//Get a specific note
 app.get("/notes/:id", function(req, res) {
   db.Note.findOne({ _id: req.params.id })
     .then(function(dbNote) {
@@ -154,6 +159,7 @@ app.get("/notes/:id", function(req, res) {
     });
 });
 
+//Delete specific note
 app.delete("/notes/:id", function(req, res) {
   db.Note.findByIdAndDelete(req.params.id)
     .then(function(data) {
@@ -164,8 +170,8 @@ app.delete("/notes/:id", function(req, res) {
     });
 });
 
-// Update just one note by an id
-app.post("/update/:id", function(req, res) {
+// Update for saving an article
+app.post("/updateSaved/:id", function(req, res) {
   db.Article.updateOne(
     {
       _id: mongojs.ObjectId(req.params.id)
@@ -187,15 +193,27 @@ app.post("/update/:id", function(req, res) {
   );
 });
 
-//Is this needed? Or should I just use an "unsave" button
-app.delete("/saved-articles/:id", function(req, res) {
-  db.Article.findByIdAndDelete(req.params.id)
-    .then(function(data) {
-      res.json("Saved Article Removed: " + data);
-    })
-    .catch(function(err) {
-      res.json(err);
-    });
+//Update for unsaving an article
+app.post("/updateUnsaved/:id", function(req, res) {
+  db.Article.updateOne(
+    {
+      _id: mongojs.ObjectId(req.params.id)
+    },
+    {
+      $set: {
+        saved: false
+      }
+    },
+    function(err, edited) {
+      if (err) {
+        console.log(err);
+        res.send(err);
+      } else {
+        console.log(edited);
+        res.send(edited);
+      }
+    }
+  );
 });
 
 // Listening
