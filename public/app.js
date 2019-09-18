@@ -1,5 +1,4 @@
 function showArticles() {
-  // Grab the articles as a json
   $.getJSON("/articles", function(data) {
     for (var i = 0; i < data.length; i++) {
       var imgHTML = "<img src='" + data[i].image + "'>";
@@ -33,7 +32,6 @@ function showArticles() {
 }
 
 function showSavedArticles() {
-  // Grab the articles as a json
   $.getJSON("/saved-articles", function(data) {
     for (var i = 0; i < data.length; i++) {
       var imgHTML = "<img src='" + data[i].image + "'>";
@@ -78,7 +76,7 @@ $(document).on("click", "#scrape", function() {
   });
 });
 
-// Whenever someone clicks a p tag
+// Shows the note adding section
 $(document).on("click", "p", function() {
   // Empty the notes from the note section
   $("#notes").empty();
