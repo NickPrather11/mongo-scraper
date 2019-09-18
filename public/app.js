@@ -131,6 +131,7 @@ $(document).on("click", "#savenote", function() {
       console.log(data);
       // Empty the notes section
       $("#notes").empty();
+      $("#notes").html("<h4>NOTE SAVED!</h4>");
     });
 
   // Also, remove the values entered in the input and textarea for note entry
@@ -224,11 +225,11 @@ $(document).on("click", "#allSaved", function() {
     type: "GET",
     url: "/saved-articles"
   }).then(function(response) {
-    console.log(response);
-    if (response) {
+    console.log("response length: " + response.length);
+    if (response.length > 0) {
       showSavedArticles();
     } else {
-      $("#articles").append("<p>No Saved Articles</p>");
+      $("#articles").append("<h4> No Saved Articles </h4>");
     }
   });
 });
