@@ -1,32 +1,37 @@
 function showArticles() {
   $.getJSON("/articles", function(data) {
-    for (var i = 0; i < data.length; i++) {
-      var imgHTML = "<img src='" + data[i].image + "'>";
+    if (data.length <= 0) {
+      $("#articles").text("Click 'Scrape Articles' to load articles");
+    } else {
+      $("#articles").empty();
+      for (var i = 0; i < data.length; i++) {
+        var imgHTML = "<img src='" + data[i].image + "'>";
 
-      var articleHTML =
-        "<p data-id='" +
-        data[i]._id +
-        "'>" +
-        data[i].title +
-        "<br />" +
-        data[i].author +
-        "<br />" +
-        "</p><button id='saveArticle'>Save</button><a href='" +
-        data[i].link +
-        "' target='_blank'>" +
-        data[i].link +
-        "</a><hr><br /><br />";
+        var articleHTML =
+          "<p data-id='" +
+          data[i]._id +
+          "'>" +
+          data[i].title +
+          "<br />" +
+          data[i].author +
+          "<br />" +
+          "</p><button id='saveArticle'>Save</button><a href='" +
+          data[i].link +
+          "' target='_blank'>" +
+          data[i].link +
+          "</a><hr><br /><br />";
 
-      var imgDiv = $("<div>").addClass("col-lg-3");
-      imgDiv.append(imgHTML);
-      var articleDiv = $("<div>").addClass("col-lg-9");
-      articleDiv.append(articleHTML);
+        var imgDiv = $("<div>").addClass("col-lg-3");
+        imgDiv.append(imgHTML);
+        var articleDiv = $("<div>").addClass("col-lg-9");
+        articleDiv.append(articleHTML);
 
-      var itemDiv = $("<div>").addClass("row");
-      itemDiv.append(imgDiv);
-      itemDiv.append(articleDiv);
+        var itemDiv = $("<div>").addClass("row");
+        itemDiv.append(imgDiv);
+        itemDiv.append(articleDiv);
 
-      $("#articles").append(itemDiv);
+        $("#articles").append(itemDiv);
+      }
     }
   });
 }
@@ -92,8 +97,8 @@ $(document).on("click", "p", function() {
     .then(function(data) {
       console.log(data);
       $("#notes").append("<h2>" + data.title + "</h2>");
-      $("#notes").append("<input id='titleinput' name='title' >");
-      $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
+      $("#notes").append("<input id='titleinput' name='title' placeholder='Add Note Title'>");
+      $("#notes").append("<textarea id='bodyinput' name='body' placeholder='Add Note Here'></textarea>");
       $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
 
       // If there's a note in the article
@@ -164,8 +169,8 @@ $(document).on("click", "#clearResults", function() {
     url: "/articles"
   }).then(function(data) {
     $("#articles").empty();
+    $("#articles").text("Click 'Scrape Articles' to load articles");
     $("#notes").empty();
-    console.log("All scraped entries cleared");
   });
 });
 

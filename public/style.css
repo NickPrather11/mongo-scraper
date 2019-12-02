@@ -6,7 +6,18 @@ header {
   text-align: center;
   color: goldenrod;
   background: green;
-  margin: 2rem;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+#headerDiv {
+  border: 3px solid goldenrod;
+  width: 100%;
+}
+
+#topBtns {
+  display: flex;
+  justify-content: center;
 }
 
 button {
@@ -17,4 +28,18 @@ button {
 img {
   width: 100%;
   height: auto;
+}
+
+#articles {
+  border: 1px solid black;
+  padding: 2rem;
+}
+
+#notes {
+  border: 1px solid black;
+  padding: 1rem;
+}
+
+#notes:empty {
+  border: none;
 }
